@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.deepPurple),
       darkTheme: ThemeData(primarySwatch: Colors.green),
-      home: BTNavigationEx(),
+      home: Practice5(),
       // initialRoute: "/p1",
       //  initialRoute: (token != null && JwtDecoder.isExpired(token) == false )?"/dash":"/login",
       // routes: {
@@ -294,6 +294,38 @@ class Practice2 extends StatelessWidget {
                         height: double.infinity,
                         width: 170.0,
                         color: const Color.fromARGB(255, 7, 243, 255),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: double.infinity,
+                        width: 170.0,
+                        color: const Color.fromARGB(255, 105, 7, 218),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: double.infinity,
+                        width: 170.0,
+                        color: const Color.fromARGB(255, 255, 0, 191),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: double.infinity,
+                        width: 170.0,
+                        color: const Color.fromARGB(255, 7, 243, 255),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: double.infinity,
+                        width: 170.0,
+                        color: const Color.fromARGB(255, 27, 2, 255),
                       ),
                     ),
                   ],
@@ -679,6 +711,7 @@ class Practice8_1 extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       ),
+      
     );
   }
 }
@@ -1144,7 +1177,7 @@ class BTNavigationEx extends StatefulWidget {
 
 class _BTNavigationExState extends State<BTNavigationEx> {
   var _currentState = 0;
-  final pages = [Page1(), page2(), Page3()];
+  final pages = [Page1(), Page2(), Page3()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
