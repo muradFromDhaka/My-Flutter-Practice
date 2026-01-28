@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.amber),
       darkTheme: ThemeData(primarySwatch: Colors.deepOrange),
-      home: const practice8(),
+      home: practice8(),
     );
   }
 }
@@ -975,74 +975,86 @@ class practice8 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(title: "Practice 8"),
-      body: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.red),
-                borderRadius: BorderRadius.circular(12),
-              ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Container(
-                height: 300,
-                width: 300,
-                child: Image.network(
-                  "https://1worldsync.com/wp-content/uploads/2024/02/beauty-photography-trends-2024-FI-683x1024.jpeg",
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.red),
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-              ),
-              child: Container(
-                height: 300,
-                width: 300,
+                padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS65sfDUyun306a4Vy93t0IGjnJ1yfKJ2eL4Q&s",
-                    ),
+                  border: Border.all(color: Colors.red),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Container(
+                  height: 300,
+                  width: 300,
+                  child: Image.network(
+                    "https://1worldsync.com/wp-content/uploads/2024/02/beauty-photography-trends-2024-FI-683x1024.jpeg",
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
             ),
-          ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.red),
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                child: Container(
+                  height: 300,
+                  width: 300,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS65sfDUyun306a4Vy93t0IGjnJ1yfKJ2eL4Q&s",
+                      ),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+            ),
 
-          Padding(
-            padding: EdgeInsets.all(8),
-            child: Container(
+            Padding(
               padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                // color: Colors.green,
-                border: Border.all(color: Colors.green),
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-              ),
               child: Container(
-                height: 300,
-                width: 300,
+                padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoyJfQ2k0Lr6SgD86RNTSU53x0U-d32M8Isw&s",
+                  // color: Colors.green,
+                  border: Border.all(color: Colors.green),
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                ),
+                child: Container(
+                  height: 300,
+                  width: 300,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoyJfQ2k0Lr6SgD86RNTSU53x0U-d32M8Isw&s",
+                      ),
+                      fit: BoxFit.cover,
                     ),
-                    fit: BoxFit.cover,
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+}
+
+class Exercise extends StatelessWidget {
+  const Exercise({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(appBar: MyAppBar(title: "Exercise app"));
   }
 }

@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.deepPurple),
       darkTheme: ThemeData(primarySwatch: Colors.green),
-      home: Practice5(),
+      home: Practice8_1(),
       // initialRoute: "/p1",
       //  initialRoute: (token != null && JwtDecoder.isExpired(token) == false )?"/dash":"/login",
       // routes: {
@@ -711,7 +711,6 @@ class Practice8_1 extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       ),
-      
     );
   }
 }
