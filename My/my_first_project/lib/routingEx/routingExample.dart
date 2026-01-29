@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_first_project/routingEx/ProfilePage.dart';
 import 'package:my_first_project/routingEx/aboutPage.dart';
+import 'package:my_first_project/routingEx/contactPage.dart';
 import 'package:my_first_project/routingEx/homePage.dart';
 
 void main() {
@@ -17,9 +17,9 @@ class MyApp extends StatelessWidget {
       title: "Flutter Routing Demo",
       initialRoute: '/',
       routes: {
-        '/': (context) => HomePage(),
-        '/about': (context) => Aboutpage(),
-        // '/message': (context) => MessagePage(message: "Hello from message page"),
+        '/': (context) => const HomePage(),
+        '/about': (context) => const Aboutpage(),
+        '/contact': (context) => const ContactPage(),
       },
     );
   }

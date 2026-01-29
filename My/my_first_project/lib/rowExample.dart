@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(Practice4());
+  runApp(Practice3());
 }
 
 class Practice3 extends StatelessWidget {
@@ -25,7 +25,7 @@ class Practice3 extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              Container(height: 100, width: 100, color: Colors.red),
+              Container(height: 100, width: 300, color: Colors.red),
               Container(height: 100, width: 100, color: Colors.green),
               Container(height: 100, width: 100, color: Colors.yellow),
               Container(height: 100, width: 100, color: Colors.purple),
@@ -67,7 +67,7 @@ class Practice4 extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              Container(width: 120, height: double.infinity, color: Colors.red),
+              Container(width: 420, height: double.infinity, color: Colors.red),
               Container(
                 width: 100,
                 height: double.infinity,
@@ -85,7 +85,7 @@ class Practice4 extends StatelessWidget {
                 color: Colors.green,
               ),
               Container(
-                width: 80,
+                width: 280,
                 height: double.infinity,
                 color: Colors.yellow,
               ),
@@ -96,5 +96,3 @@ class Practice4 extends StatelessWidget {
     );
   }
 }
-
-

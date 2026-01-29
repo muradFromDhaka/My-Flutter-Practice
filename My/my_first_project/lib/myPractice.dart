@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.amber),
       darkTheme: ThemeData(primarySwatch: Colors.deepOrange),
-      home: practice8(),
+      home: practice9(),
     );
   }
 }
@@ -1050,11 +1050,134 @@ class practice8 extends StatelessWidget {
   }
 }
 
+class practice8_1 extends StatelessWidget {
+  const practice8_1({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: MyAppBar(title: "Practice8_1 "),
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9YL_gULeR_w6Vus30JxsM0lGuiHFHmJKG5Q&s',
+            ),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Container(
+              height: 300,
+              width: 300,
+              child: Image.network(
+                "https://cdn.shopify.com/s/files/1/2303/2711/files/2_e822dae0-14df-4cb8-b145-ea4dc0966b34.jpg?v=1617059123",
+                fit: BoxFit.cover,
+              ),
+            ),
+            SizedBox(width: 10),
+            Container(
+              height: 300,
+              width: 300,
+              child: Image.asset("assets/img5.jpeg", fit: BoxFit.cover),
+            ),
+            SizedBox(width: 10),
+            Container(
+              height: 300,
+              width: 300,
+              child: Image.asset("assets/img5.jpeg", fit: BoxFit.cover),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class practice9 extends StatelessWidget {
+  const practice9({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: MyAppBar(title: "Practice 9"),
+      body: Center(
+        child: Container(
+          height: 350,
+          width: 350,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            image: DecorationImage(
+              image: NetworkImage(
+                "https://cdn.shopify.com/s/files/1/2303/2711/files/2_e822dae0-14df-4cb8-b145-ea4dc0966b34.jpg?v=1617059123",
+              ),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class Exercise extends StatelessWidget {
   const Exercise({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: MyAppBar(title: "Exercise app"));
+    return Scaffold(
+      appBar: MyAppBar(title: "Exercise app"),
+      body: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.red),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.all(8),
+              child: Container(
+                height: 400,
+                width: 400,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.green),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: GridView.count(
+                  crossAxisCount: 2, // ✅ ২টা column
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  children: [
+                    imageItem(),
+                    imageItem(),
+                    imageItem(),
+                    imageItem(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
+}
+
+Widget imageItem() {
+  return Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
+      image: DecorationImage(
+        image: NetworkImage(
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5IKXwqPvjNJW0hISdv8H3N7XB-yvIrx6KZg&s",
+        ),
+        fit: BoxFit.cover,
+      ),
+    ),
+  );
 }
