@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.deepPurple),
       darkTheme: ThemeData(primarySwatch: Colors.green),
-      home: Practice9(),
+      home: HomePage(),
       // initialRoute: "/p1",
       //  initialRoute: (token != null && JwtDecoder.isExpired(token) == false )?"/dash":"/login",
       // routes: {
@@ -763,20 +763,29 @@ class HomePage extends StatelessWidget {
               padding: EdgeInsets.all(16),
               child: Column(
                 children: [
+                  // Container(
+                  //   height: 200,
+                  //   width: 200,
+                  //   child: ClipOval(
+                  //     // borderRadius: BorderRadius.circular(10),
+                  //     child: Image.network(
+                  //       "https://static.vecteezy.com/vite/assets/photo-masthead-375-BoK_p8LG.webp",
+                  //       // height: 100,
+                  //       // width: double.infinity,
+                  //       fit: BoxFit.cover,
+                  //     ),
+                  //   ),
+                  // ),
+                  // SizedBox(height: 10),
+                  // Text(
+                  //   "Welcome to MyApp",
+                  //   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  // ),
+                  
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      "https://static.vecteezy.com/vite/assets/photo-masthead-375-BoK_p8LG.webp",
-                      height: 100,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "Welcome to MyApp",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
+                    borderRadius: BorderRadius.circular(12),
+                  )
+
                 ],
               ),
             ),
