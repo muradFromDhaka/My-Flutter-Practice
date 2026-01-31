@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:my_first_project/page1.dart';
-import 'package:my_first_project/page2.dart';
-import 'package:my_first_project/page3.dart';
+import 'package:my_first_project/listAndGridViewEx/page1.dart';
+import 'package:my_first_project/listAndGridViewEx/page2.dart';
+import 'package:my_first_project/listAndGridViewEx/page3.dart';
 
 void main() {
   runApp(MyApp());

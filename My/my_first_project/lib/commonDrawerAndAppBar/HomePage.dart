@@ -8,7 +8,8 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CommonAppBar(title: "Home"),
-      endDrawer: AppDrawer(context: context),
+      // endDrawer: AppDrawer(context: context),
+      drawer: AppDrawer(context: context),
       body: pageBody("Home page", Icons.home),
     );
   }

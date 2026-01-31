@@ -72,12 +72,12 @@ class AppDrawer extends StatelessWidget {
         children: [
           const UserAccountsDrawerHeader(
             accountName: Text("MURAD"),
-            accountEmail: Text("dfsfsdf"),
+            accountEmail: Text("murad@gmail.com"),
             decoration: BoxDecoration(color: Colors.blue),
             currentAccountPicture: CircleAvatar(
               child: Icon(Icons.person),
               // backgroundImage: NetworkImage("dfdfdffffffffffff"),
-              backgroundImage: AssetImage("sddddddddddddd"),
+              backgroundImage: AssetImage("assets/img5.jpeg"),
             ),
           ),
           ListTile(

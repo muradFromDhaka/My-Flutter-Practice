@@ -8,7 +8,7 @@ class Aboutpage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("About page"),
-        automaticallyImplyLeading: false,
+        // automaticallyImplyLeading: false,
       ),
       body: Center(
         child: ElevatedButton(

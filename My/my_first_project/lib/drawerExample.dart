@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 void main() {
@@ -28,9 +27,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-
 
 class DrawerEx extends StatelessWidget {
   const DrawerEx({super.key});
@@ -70,15 +66,15 @@ class DrawerEx extends StatelessWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text("page 1 loaded successfully..!"),
-                    duration: Duration(seconds: 2), // optional
+                    duration: Duration(seconds: 1), // optional
                     backgroundColor: Colors.blue, // optional
-                    action: SnackBarAction(
-                      // optional
-                      label: "Undo",
-                      onPressed: () {
-                        // undo code here
-                      },
-                    ),
+                    // action: SnackBarAction(
+                    //   // optional
+                    //   label: "Undo",
+                    //   onPressed: () {
+                    //     // undo code here
+                    //   },
+                    // ),
                   ),
                 );
               },
@@ -87,7 +83,10 @@ class DrawerEx extends StatelessWidget {
               leading: Icon(Icons.settings),
               title: const Text("Page 2"),
               onTap: () {
-                // ScaffoldMessenger.of(context).showSnackBar(SnackBar())
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: const Text("Page 2 loaded successfully.")),
+                );
               },
             ),
           ],

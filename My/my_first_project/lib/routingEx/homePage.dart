@@ -5,7 +5,6 @@ import 'package:my_first_project/routingEx/contactPage.dart';
 import 'package:my_first_project/routingEx/inputPage.dart';
 import 'package:my_first_project/routingEx/messagePage.dart';
 
-
 // Home Page
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -15,6 +14,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home Page"),
+        automaticallyImplyLeading: true,
         // leading: IconButton(
         //   icon: Icon(Icons.arrow_back),
         //   onPressed: () => Navigator.pop(context),

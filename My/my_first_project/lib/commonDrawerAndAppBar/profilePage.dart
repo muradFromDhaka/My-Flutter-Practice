@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_first_project/commonDrawerAndAppBar/HomePage.dart';
-import 'package:my_first_project/commonDrawerAndAppBar/commonDrowerAndAppbar.dart';
+import 'package:my_first_project/myPractice/DrawerAndAppBarCommonPractice.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -8,8 +8,8 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CommonAppBar(title: "Profile"),
-      drawer: AppDrawer(context: context),
+      appBar: const CommonAppBarr(title: "Profile"),
+      drawer: PracticeDrawer(context: context),
       body: pageBody("Profile page", Icons.home),
     );
   }
