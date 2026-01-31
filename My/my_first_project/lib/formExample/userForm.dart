@@ -12,31 +12,30 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true), // enable Material 3
-      home: const LargeFormPage(),
+      home: const Userform(),
     );
   }
 }
 
-class LargeFormPage extends StatefulWidget {
-  const LargeFormPage({super.key});
+class Userform extends StatefulWidget {
+  const Userform({super.key});
 
   @override
-  State<LargeFormPage> createState() => _LargeFormPageState();
+  State<Userform> createState() => _UserformState();
 }
 
-class _LargeFormPageState extends State<LargeFormPage> {
+class _UserformState extends State<Userform> {
   final _formKey = GlobalKey<FormState>();
 
   String? _name;
   String? _email;
-  String? _password;
-  String? _gender;
-  bool _subscribe = false;
-  String? _country;
-  bool _switchValue = false;
+  String? _age;
   DateTime? _dob;
+  String? _gender;
+  String? _country;
+  bool _active = false;
 
-  final List<String> countries = ["Bangladesh", "India", "USA", "UK"];
+  final List<String> countries = ["Bangladesh", "USA", "Pakisthan", "UK"];
 
   Future<void> _pickDate() async {
     DateTime? picked = await showDatePicker(
@@ -55,32 +54,40 @@ class _LargeFormPageState extends State<LargeFormPage> {
   void _submit() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+
       print("Name: $_name");
       print("Email: $_email");
-      print("Password: $_password");
+      print("Age: $_age");
+      print("DOB: $_dob");
       print("Gender: $_gender");
       print("Country: $_country");
-      print("Subscribe: $_subscribe");
-      print("Switch: $_switchValue");
-      print("DOB: $_dob");
+      print("Active: $_active");
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Form Submitted")));
+      ).showSnackBar(const SnackBar(content: Text("User form submitted.")));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Large Form Example")),
+      appBar: AppBar(
+        title: const Text("User Form"),
+        titleSpacing: 15,
+        backgroundColor: Colors.purple,
+        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.search))],
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              // Name
+              Padding(padding: EdgeInsets.only(top: 100)),
+              Center(child: Icon(Icons.camera_enhance, size: 100)),
+              SizedBox(height: 20),
+
               TextFormField(
                 decoration: const InputDecoration(
                   labelText: "Name",
@@ -107,22 +114,38 @@ class _LargeFormPageState extends State<LargeFormPage> {
               ),
               const SizedBox(height: 16),
 
-              // Password
+              // Age
               TextFormField(
                 decoration: const InputDecoration(
-                  labelText: "Password",
+                  labelText: "Age",
                   border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.lock),
+                  // prefixIcon: Icon(Icons.age),
                 ),
-                obscureText: true,
+                keyboardType: TextInputType.emailAddress,
                 validator: (value) =>
-                    value!.isEmpty ? "Please enter your password" : null,
-                onSaved: (value) => _password = value,
+                    value!.isEmpty ? "Please enter your age" : null,
+                onSaved: (value) => _age = value,
               ),
               const SizedBox(height: 16),
 
-              // Gender - Updated RadioGroup
-              // Gender - using stable Flutter
+              // Date Picker
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _dob == null
+                          ? "Select Date of Birth"
+                          : "DOB: ${_dob!.day}/${_dob!.month}/${_dob!.year}",
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: _pickDate,
+                    child: const Text("Pick Date"),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -181,47 +204,17 @@ class _LargeFormPageState extends State<LargeFormPage> {
               ),
               const SizedBox(height: 16),
 
-              // Subscribe Checkbox
-              CheckboxListTile(
-                title: const Text("Subscribe to newsletter"),
-                value: _subscribe,
-                onChanged: (value) {
-                  setState(() {
-                    _subscribe = value!;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-
               // Notifications Switch
               SwitchListTile(
-                title: const Text("Enable Notifications"),
-                value: _switchValue,
+                title: const Text("active"),
+                value: _active,
                 onChanged: (value) {
                   setState(() {
-                    _switchValue = value;
+                    _active = value;
                   });
                 },
               ),
               const SizedBox(height: 16),
-
-              // Date Picker
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      _dob == null
-                          ? "Select Date of Birth"
-                          : "DOB: ${_dob!.day}/${_dob!.month}/${_dob!.year}",
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: _pickDate,
-                    child: const Text("Pick Date"),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
 
               // Submit Button
               SizedBox(
