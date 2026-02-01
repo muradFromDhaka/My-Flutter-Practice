@@ -153,12 +153,18 @@ class _UserFormState extends State<UserForm> {
     List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
   }) {
-    return TextFormField(
-      controller: ctrl,
-      keyboardType: type,
-      inputFormatters: inputFormatters,
-      decoration: InputDecoration(labelText: label),
-      validator: validator,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 12.0),
+      child: TextFormField(
+        controller: ctrl,
+        keyboardType: type,
+        inputFormatters: inputFormatters,
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+        ),
+        validator: validator,
+      ),
     );
   }
 
@@ -200,7 +206,9 @@ class _UserFormState extends State<UserForm> {
                 emailCtrl,
                 type: TextInputType.emailAddress,
                 validator: (v) =>
-                    v == null || !v.contains('@') ? 'Invalid email' : null,
+                    v == null || !v.contains('@') || !v.contains('.')
+                    ? 'Invalid email'
+                    : null,
               ),
               buildTextField('Phone', phoneCtrl, type: TextInputType.phone),
               buildTextField('Address', addressCtrl),
@@ -222,7 +230,6 @@ class _UserFormState extends State<UserForm> {
                 validator: (v) =>
                     double.tryParse(v ?? '') == null ? 'Invalid salary' : null,
               ),
-
               const SizedBox(height: 10),
 
               // DOB
@@ -242,24 +249,44 @@ class _UserFormState extends State<UserForm> {
                 'Gender',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Column(
-                children: Gender.values
-                    .map(
-                      (g) => RadioListTile<Gender>(
-                        title: Text(g.name.toUpperCase()),
-                        value: g,
-                        groupValue: gender,
-                        onChanged: (v) => setState(() => gender = v!),
-                      ),
-                    )
-                    .toList(),
+
+              // Column(
+              //   children: Gender.values
+              //       .map(
+              //         (g) => RadioListTile<Gender>(
+              //           title: Text(g.name.toUpperCase()),
+              //           value: g,
+              //           groupValue: gender,
+              //           onChanged: (v) => setState(() => gender = v!),
+              //         ),
+              //       )
+              //       .toList(),
+              // ),
+              // const SizedBox(height: 10),
+              RadioGroup<Gender>(
+                groupValue: gender,
+                onChanged: (v) => setState(() => gender = v!),
+                child: Row(
+                  children: Gender.values.map((g) {
+                    return Row(
+                      children: [
+                        Radio<Gender>(value: g),
+                        Text(g.name.toUpperCase()),
+                        const SizedBox(width: 16),
+                      ],
+                    );
+                  }).toList(),
+                ),
               ),
               const SizedBox(height: 10),
 
               // Department (Dropdown)
               DropdownButtonFormField<String>(
                 value: department,
-                decoration: const InputDecoration(labelText: 'Department'),
+                decoration: const InputDecoration(
+                  labelText: 'Department',
+                  border: OutlineInputBorder(),
+                ),
                 items: allDepartments
                     .map((d) => DropdownMenuItem(value: d, child: Text(d)))
                     .toList(),
@@ -277,18 +304,36 @@ class _UserFormState extends State<UserForm> {
 
               const Divider(),
 
-              // Skills (Checkboxes)
+              // // Skills (Checkboxes)
+              // const Text(
+              //   'Skills',
+              //   style: TextStyle(fontWeight: FontWeight.bold),
+              // ),
+
+              // ...allSkills.map(
+              //   (s) => CheckboxListTile(
+              //     title: Text(s),
+              //     value: skills.contains(s),
+              //     onChanged: (v) =>
+              //         setState(() => v! ? skills.add(s) : skills.remove(s)),
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
               const Text(
                 'Skills',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              ...allSkills.map(
-                (s) => CheckboxListTile(
-                  title: Text(s),
-                  value: skills.contains(s),
-                  onChanged: (v) =>
-                      setState(() => v! ? skills.add(s) : skills.remove(s)),
-                ),
+
+              Column(
+                children: allSkills.map((s) {
+                  return CheckboxListTile(
+                    title: Text(s),
+                    value: skills.contains(s),
+                    onChanged: (v) {
+                      setState(() => v! ? skills.add(s) : skills.remove(s));
+                    },
+                  );
+                }).toList(),
               ),
 
               const SizedBox(height: 20),

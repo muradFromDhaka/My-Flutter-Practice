@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:my_first_project/crud_SQLite/screens/user_form.dart';
 import 'package:my_first_project/crud_SQLite/screens/user_list.dart';
@@ -14,7 +15,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       // home: const UserList(),
-      routes: {"/": (context) => UserList(), "/form": (context) => UserForm()},
+      routes: {
+        "/": (context) => UserList(),
+       "/form": (context) => UserForm()
+       },
     );
   }
 }

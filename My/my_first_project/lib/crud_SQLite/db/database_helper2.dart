@@ -27,7 +27,7 @@ class DatabaseHelper {
   // ==============================
   Future<Database> _initDB() async {
     Directory dir = await getApplicationDocumentsDirectory();
-    String path = join(dir.path, 'app1.db');
+    String path = join(dir.path, 'app3.db');
 
     return await openDatabase(
       path,
@@ -50,7 +50,7 @@ class DatabaseHelper {
         address TEXT,
         age INTEGER,
         salary REAL,
-        gender TEXT,
+        gender INTEGER,
         department TEXT,
         dob TEXT,
         createdAt TEXT,
