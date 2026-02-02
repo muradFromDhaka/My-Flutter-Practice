@@ -30,7 +30,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  fluttertoast: ^9.0.0
+  sqflite: ^2.3.0
+  path: ^1.8.3
+  provider: ^6.1.1
+  intl: ^0.18.1
+  flutter_launcher_icons: ^0.13.1
+  shimmer: ^3.0.0  # For loading effects
+  carousel_slider: ^4.2.1  # For product image carousel
+  badges: ^3.0.0  # For cart badge
+  flutter_rating_bar: ^4.0.1
+
+
   
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

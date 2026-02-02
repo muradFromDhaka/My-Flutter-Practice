@@ -1,13 +1,10 @@
-import 'package:e_commerce_app_flutter/main.dart';
-import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const ECommerceApp());
-}
-
 // ====================
 // DUMMY DATA MODELS (UI Only)
 // ====================
+
+import 'package:e_commerce_app_flutter/main.dart';
+import 'package:e_commerce_app_flutter/models/user.dart';
+import 'package:flutter/material.dart';
 
 class DummyUser {
   final String id;
@@ -685,7 +682,8 @@ class UserProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: CommonAppBar(title: "My Profile"),
-      drawer: const AppDrawer(),
+      drawer: AppDrawer(),
+
       body: CustomScrollView(
         slivers: [
           SliverList(
