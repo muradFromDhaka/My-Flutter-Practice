@@ -1,3 +1,4 @@
+import 'package:e_commerce_app_flutter/homePage.dart';
 import 'package:e_commerce_app_flutter/screens/Product_Details_Screen.dart';
 import 'package:e_commerce_app_flutter/screens/User_Profile_Screen.dart';
 import 'package:e_commerce_app_flutter/screens/Vendor_Profile_Screen.dart';
@@ -22,10 +23,11 @@ class MyApp extends StatelessWidget {
       title: 'e-commerce app',
       initialRoute: '/',
       routes: {
-        '/': (context) => HomeScreen(),
-        '/proudct': (context) => ProductDetailsScreen(),
-        '/user': (context) => UserProfileScreen(),
-        '/vendor': (context) => VendorProfileScreen(),
+        '/': (context) => HomePage(),
+        // '/': (context) => HomeScreen(),
+        // '/proudct': (context) => ProductDetailsScreen(),
+        // '/user': (context) => UserProfileScreen(),
+        // '/vendor': (context) => VendorProfileScreen(),
       },
     );
   }
@@ -60,56 +62,6 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 // ==========================Common Drower========================
-// class AppDrawer extends StatelessWidget {
-//   const AppDrawer({super.key});
-
-//   void navigate(BuildContext context, String route) {
-//     Navigator.pop(context);
-//     Navigator.pushNamed(context, route);
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Drawer(
-//       child: ListView(
-//         padding: EdgeInsets.zero,
-//         children: [
-//           const UserAccountsDrawerHeader(
-//             accountName: Text("MURAD"),
-//             accountEmail: Text("murad@gmail.com"),
-//             decoration: BoxDecoration(color: Colors.blue),
-//             currentAccountPicture: CircleAvatar(
-//               child: Icon(Icons.person),
-//               // backgroundImage: NetworkImage("dfdfdffffffffffff"),
-//               backgroundImage: AssetImage("assets/img5.jpeg"),
-//             ),
-//           ),
-//           ListTile(
-//             leading: const Icon(Icons.home),
-//             title: const Text("Home"),
-//             onTap: () => navigate(HomeScreen()),
-//           ),
-//           ListTile(
-//             leading: const Icon(Icons.notifications),
-//             title: const Text("Products"),
-//             onTap: () => navigate(ProductDetailsScreen()),
-//           ),
-//           ListTile(
-//             leading: const Icon(Icons.settings),
-//             title: const Text("User_Profile"),
-//             onTap: () => navigate(UserProfileScreen()),
-//           ),
-//           ListTile(
-//             leading: const Icon(Icons.shop),
-//             title: const Text("Vendor"),
-//             onTap: () => navigate(VendorProfileScreen()),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 

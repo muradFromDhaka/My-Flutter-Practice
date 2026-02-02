@@ -644,38 +644,3 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-
-// ====================
-// MAIN APP
-// ====================
-
-class ECommerceApp extends StatelessWidget {
-  const ECommerceApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'ShopEasy',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-        ),
-        // cardTheme: CardTheme(
-        //   elevation: 1,
-        //   shape: RoundedRectangleBorder(
-        //     borderRadius: BorderRadius.circular(12),
-        //   ),
-        //   surfaceTintColor: Colors.white,
-        // ),
-      ),
-      home: HomeScreen(),
-    );
-  }
-}

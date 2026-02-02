@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../db/database_helper2.dart';
 import '../model/user2.dart';
-import 'u_form.dart';
+import 'u_form2.dart';
 
 class UserList extends StatefulWidget {
   const UserList({super.key});

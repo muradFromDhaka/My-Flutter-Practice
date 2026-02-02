@@ -159,7 +159,7 @@ class _LargeFormPageState extends State<LargeFormPage> {
               // Country Dropdown
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
-                  labelText: "Country",
+                  labelText: "Select your Country",
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.map),
                 ),
@@ -171,11 +171,7 @@ class _LargeFormPageState extends State<LargeFormPage> {
                       ),
                     )
                     .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _country = value;
-                  });
-                },
+                onChanged: (value) => setState(() => _country = value),
                 validator: (value) =>
                     value == null ? "Please select your country" : null,
               ),
