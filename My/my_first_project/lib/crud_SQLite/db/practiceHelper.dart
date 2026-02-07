@@ -24,7 +24,7 @@ class DatabaseHelperPrac {
       path,
       version: 1,
       onCreate: _createDB,
-      onUpgrade: _upgradeDB,
+      // onUpgrade: _upgradeDB,
     );
   }
 
@@ -47,4 +47,8 @@ create table users (
   imagePath TEXT
 ) ''');
   }
+
+
+// Future<void> _upgradeDB
+
 }
