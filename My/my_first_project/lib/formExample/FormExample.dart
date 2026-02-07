@@ -171,6 +171,12 @@ class _LargeFormPageState extends State<LargeFormPage> {
                       ),
                     )
                     .toList(),
+                // items: [
+                // DropdownMenuItem(child: Text(countries[0]), value: countries[0]),
+                // DropdownMenuItem(child: Text(countries[1]), value: countries[1]),
+                // DropdownMenuItem(child: Text(countries[2]), value: countries[2]),
+                // DropdownMenuItem(child: Text(countries[3]), value: countries[3]),
+                // ],
                 onChanged: (value) => setState(() => _country = value),
                 validator: (value) =>
                     value == null ? "Please select your country" : null,

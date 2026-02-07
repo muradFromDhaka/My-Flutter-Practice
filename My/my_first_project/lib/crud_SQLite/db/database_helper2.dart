@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -15,9 +16,7 @@ class DatabaseHelper {
   // DATABASE INSTANCE
   // ==============================
   Future<Database> get database async {
-    if (_database != null) {
-      return _database!;
-    }
+    if (_database != null) return _database!;
     _database = await _initDB();
     return _database!;
   }
@@ -25,10 +24,10 @@ class DatabaseHelper {
   // ==============================
   // INIT DATABASE
   // ==============================
+
   Future<Database> _initDB() async {
     Directory dir = await getApplicationDocumentsDirectory();
-    String path = join(dir.path, 'app3.db');
-
+    String path = join(dir.path, 'app.db');
     return await openDatabase(
       path,
       version: 1,

@@ -250,19 +250,7 @@ class _UserFormState extends State<UserForm> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
 
-              // Column(
-              //   children: Gender.values
-              //       .map(
-              //         (g) => RadioListTile<Gender>(
-              //           title: Text(g.name.toUpperCase()),
-              //           value: g,
-              //           groupValue: gender,
-              //           onChanged: (v) => setState(() => gender = v!),
-              //         ),
-              //       )
-              //       .toList(),
-              // ),
-              // const SizedBox(height: 10),
+              const SizedBox(height: 10),
               RadioGroup<Gender>(
                 groupValue: gender,
                 onChanged: (v) => setState(() => gender = v!),
