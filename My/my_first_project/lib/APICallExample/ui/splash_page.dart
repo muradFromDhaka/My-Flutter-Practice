@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:my_first_project/APICallExample/services/auth_service.dart';
@@ -13,7 +12,6 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-
   final AuthService authService = AuthService();
 
   @override
@@ -43,8 +41,6 @@ class _SplashPageState extends State<SplashPage> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,11 +50,7 @@ class _SplashPageState extends State<SplashPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             // App Logo
-            Image.asset(
-              'assets/logo.png',
-              width: 120,
-              height: 120,
-            ),
+            Image.asset('assets/img6.jpeg', width: 120, height: 120),
 
             const SizedBox(height: 20),
 

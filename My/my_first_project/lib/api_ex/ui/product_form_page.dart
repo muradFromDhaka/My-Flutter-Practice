@@ -1,16 +1,18 @@
-import 'package:ay_app/api_ex/models/product.dart';
-import 'package:ay_app/api_ex/services/product_api.dart';
+import 'package:my_first_project/api_ex/models/product.dart';
+import 'package:my_first_project/api_ex/services/product_api.dart';
 import 'package:flutter/material.dart';
 
-
 class ProductFormPage extends StatefulWidget {
-  const ProductFormPage({super.key});
+  final Product? product; // 👈 optional (null = create)
+
+  const ProductFormPage({super.key, this.product});
 
   @override
   State<ProductFormPage> createState() => _ProductFormPageState();
 }
 
 class _ProductFormPageState extends State<ProductFormPage> {
+  
   final _formKey = GlobalKey<FormState>();
   final api = ProductApiService();
 
@@ -25,6 +27,26 @@ class _ProductFormPageState extends State<ProductFormPage> {
   bool active = true;
   bool loading = false;
 
+  bool get isEdit => widget.product != null;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Prefill fields if editing
+    final p = widget.product;
+    if (p != null) {
+      nameCtrl.text = p.name;
+      categoryCtrl.text = p.category;
+      priceCtrl.text = p.price.toString();
+      descCtrl.text = p.description ?? '';
+      stockCtrl.text = p.stock?.toString() ?? '';
+      ratingCtrl.text = p.rating?.toString() ?? '';
+      imageCtrl.text = p.imageUrl ?? '';
+      active = p.active ?? true;
+    }
+  }
+
   void submit() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -32,7 +54,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
 
     try {
       final product = Product(
-        id: 0,
+        id: widget.product?.id,
         name: nameCtrl.text,
         category: categoryCtrl.text,
         price: double.parse(priceCtrl.text),
@@ -41,14 +63,22 @@ class _ProductFormPageState extends State<ProductFormPage> {
         active: active,
         rating: double.parse(ratingCtrl.text),
         imageUrl: imageCtrl.text,
-        // createdAt: DateTime.now(),
       );
 
-      await api.createProduct(product);
+      if (isEdit) {
+        await api.updateProduct(product.id!, product);
+      } else {
+        await api.createProduct(product);
+      }
 
       if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("✅ Product created")),
+        SnackBar(
+          content: Text(
+            isEdit ? "✏️ Product updated" : "✅ Product created",
+          ),
+        ),
       );
 
       Navigator.pop(context, true);
@@ -63,7 +93,9 @@ class _ProductFormPageState extends State<ProductFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Add Product")),
+      appBar: AppBar(
+        title: Text(isEdit ? "Edit Product" : "Add Product"),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -92,7 +124,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   onPressed: loading ? null : submit,
                   child: loading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text("SAVE PRODUCT"),
+                      : Text(isEdit ? "UPDATE PRODUCT" : "SAVE PRODUCT"),
                 ),
               ),
             ],

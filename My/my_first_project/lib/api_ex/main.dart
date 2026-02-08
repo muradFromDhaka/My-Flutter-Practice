@@ -1,4 +1,4 @@
-import 'package:ay_app/api_ex/ui/splash_page.dart';
+import 'package:my_first_project/api_ex/ui/splash_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {

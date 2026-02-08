@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:ay_app/api_ex/services/api_config.dart';
+import 'package:my_first_project/api_ex/services/api_config.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:ay_app/api_ex/services/auth_service.dart';
+import 'package:my_first_project/api_ex/services/auth_service.dart';
 import '../models/product.dart';
 
 class ProductApiService {

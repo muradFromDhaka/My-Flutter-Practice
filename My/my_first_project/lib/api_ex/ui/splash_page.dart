@@ -1,9 +1,9 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:ay_app/api_ex/services/auth_service.dart';
-import 'package:ay_app/api_ex/ui/login_page.dart';
-import 'package:ay_app/api_ex/ui/product_list_page.dart';
+import 'package:my_first_project/api_ex/services/auth_service.dart';
+import 'package:my_first_project/api_ex/ui/login_page.dart';
+import 'package:my_first_project/api_ex/ui/product_list_page.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});

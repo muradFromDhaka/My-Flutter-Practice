@@ -1,7 +1,9 @@
-import 'package:my_first_project/api_ex/models/product.dart';
-import 'package:my_first_project/api_ex/services/product_api.dart';
-import 'package:my_first_project/api_ex/ui/product_form_page.dart';
+import 'package:my_first_project/APICallExample/models/products.dart';
+import 'package:my_first_project/APICallExample/services/auth_service.dart';
+
 import 'package:flutter/material.dart';
+import 'package:my_first_project/APICallExample/services/proudct_api.dart';
+import 'package:my_first_project/APICallExample/ui/proudct_form.dart';
 import 'login_page.dart'; // make sure path is correct
 
 class ProductListPage extends StatefulWidget {
@@ -11,25 +13,72 @@ class ProductListPage extends StatefulWidget {
   State<ProductListPage> createState() => _ProductListPageState();
 }
 
-class _ProductListPageState extends State<ProductListPage> {
-  
-  late Future<List<Product>> products;
-  
+class _ProductListPageState extends State<ProductListPage>
+    with WidgetsBindingObserver {
   final api = ProductApiService();
+  final auth = AuthService();
+
+  late Future<List<Product>> _productsFuture;
 
   @override
   void initState() {
     super.initState();
-    products = api.getAllProducts();
+    WidgetsBinding.instance.addObserver(this);
+    _refreshProducts();
   }
 
-  void _logout() async {
-    await api.logout(); // clear token
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  /// Refresh when app comes back to foreground
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _refreshProducts();
+    }
+  }
+
+  void _refreshProducts() {
+    setState(() {
+      _productsFuture = api.getAllProducts();
+    });
+  }
+
+  Future<void> _logout() async {
+    await auth.logout();
+    if (!mounted) return;
+
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => const LoginPage()),
-      (route) => false, // remove all previous routes
+      (_) => false,
     );
+  }
+
+  Future<void> _addProduct() async {
+    final created = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const ProductFormPage()),
+    );
+
+    if (created == true) _refreshProducts();
+  }
+
+  Future<void> _editProduct(Product product) async {
+    final updated = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => ProductFormPage(product: product)),
+    );
+
+    if (updated == true) _refreshProducts();
+  }
+
+  Future<void> _deleteProduct(Product product) async {
+    await api.deleteProduct(product.id!);
+    _refreshProducts();
   }
 
   @override
@@ -39,58 +88,63 @@ class _ProductListPageState extends State<ProductListPage> {
         title: const Text("Products"),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () async {
-              final created = await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ProductFormPage()),
-              );
-
-              if (created == true) {
-                setState(() {
-                  products = api.getAllProducts();
-                });
-              }
-            },
+            icon: const Icon(Icons.refresh),
+            onPressed: _refreshProducts,
           ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
-            onPressed: _logout,
-          ),
+          IconButton(icon: const Icon(Icons.add), onPressed: _addProduct),
+          IconButton(icon: const Icon(Icons.logout), onPressed: _logout),
         ],
       ),
       body: FutureBuilder<List<Product>>(
-        future: products,
+        future: _productsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
+
           if (snapshot.hasError) {
             return Center(child: Text(snapshot.error.toString()));
           }
 
-          final data = snapshot.data!;
-          return ListView.builder(
-            itemCount: data.length,
-            itemBuilder: (_, i) {
-              final p = data[i];
-              return Card(
-                child: ListTile(
-                  leading: Image.network(
-                    p.imageUrl ?? '',
-                    width: 50,
-                    errorBuilder: (_, _, _) => const Icon(Icons.image),
+          final products = snapshot.data ?? [];
+
+          if (products.isEmpty) {
+            return const Center(child: Text("No products found"));
+          }
+
+          return RefreshIndicator(
+            onRefresh: () async => _refreshProducts(),
+            child: ListView.builder(
+              itemCount: products.length,
+              itemBuilder: (_, i) {
+                final p = products[i];
+
+                return Card(
+                  child: ListTile(
+                    leading: Image.network(
+                      p.imageUrl ?? '',
+                      width: 50,
+                      errorBuilder: (_, __, ___) => const Icon(Icons.image),
+                    ),
+                    title: Text(p.name),
+                    subtitle: Text("${p.category} • \$${p.price}"),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () => _editProduct(p),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => _deleteProduct(p),
+                        ),
+                      ],
+                    ),
                   ),
-                  title: Text(p.name),
-                  subtitle: Text("${p.category} • \$${p.price}"),
-                  trailing: Icon(
-                    Icons.star,
-                    color: (p.rating ?? 0) >= 4 ? Colors.amber : Colors.grey,
-                  ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
         },
       ),
