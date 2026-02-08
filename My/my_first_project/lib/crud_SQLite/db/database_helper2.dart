@@ -83,6 +83,19 @@ class DatabaseHelper {
   }
 
   // ==============================
+  // UPDATE
+  // ==============================
+  Future<int> updateUser(User user) async {
+    final db = await database;
+    return await db.update(
+      'users',
+      user.toMap(),
+      where: 'id = ?',
+      whereArgs: [user.id],
+    );
+  }
+
+  // ==============================
   // READ (ALL)
   // ==============================
   Future<List<User>> getUsers() async {
@@ -106,19 +119,6 @@ class DatabaseHelper {
       return User.fromMap(result.first);
     }
     return null;
-  }
-
-  // ==============================
-  // UPDATE
-  // ==============================
-  Future<int> updateUser(User user) async {
-    final db = await database;
-    return await db.update(
-      'users',
-      user.toMap(),
-      where: 'id = ?',
-      whereArgs: [user.id],
-    );
   }
 
   // ==============================
