@@ -122,7 +122,7 @@ class _BrandListPageState extends State<BrandListPage>
                 return Card(
                   child: ListTile(
                     leading: Image.network(
-                      p.logoUrl ?? '',
+                     ("http://192.168.20.43:8080" + p.logoUrl) ?? '',
                       width: 50,
                       errorBuilder: (_, __, ___) => const Icon(Icons.image),
                     ),

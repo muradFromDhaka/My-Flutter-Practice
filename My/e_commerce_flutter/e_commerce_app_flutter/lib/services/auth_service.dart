@@ -8,7 +8,6 @@ class AuthService {
   Future<bool> login(String username, String password) async {
     final res = await http.post(
       Uri.parse("${ApiConfig.baseUrl}/auth/signin"),
-      // headers: const {"Content-Type": "application/json"},
       headers: await headers(),
       body: jsonEncode({"username": username, "password": password}),
     );
