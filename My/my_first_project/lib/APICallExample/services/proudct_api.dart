@@ -15,8 +15,8 @@ class ProductApiService {
       headers: await authService.headers(auth: true),
     );
 
-    print("GET -> Status: ${res.statusCode}");
-    print("Response: ${res.body}");
+    // print("GET -> Status: ${res.statusCode}");
+    // print("Response: ${res.body}");
 
     if (res.statusCode == 200) {
       final List data = jsonDecode(res.body);
@@ -37,8 +37,8 @@ class ProductApiService {
       headers: await authService.headers(auth: true),
     );
 
-    print("GET $uri -> Status: ${res.statusCode}");
-    print("Response: ${res.body}");
+    // print("GET $uri -> Status: ${res.statusCode}");
+    // print("Response: ${res.body}");
 
     if (res.statusCode == 200) {
       return Product.fromJson(jsonDecode(res.body));
@@ -83,8 +83,8 @@ class ProductApiService {
       body: jsonEncode(product.toJson()),
     );
 
-    print("PUT $uri -> Status: ${res.statusCode}");
-    print("Response: ${res.body}");
+    // print("PUT $uri -> Status: ${res.statusCode}");
+    // print("Response: ${res.body}");
 
     if (res.statusCode == 200) {
       return Product.fromJson(jsonDecode(res.body));

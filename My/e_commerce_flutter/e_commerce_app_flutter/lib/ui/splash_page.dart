@@ -1,8 +1,8 @@
 import 'dart:async';
+import 'package:e_commerce_app_flutter/services/auth_service.dart';
+import 'package:e_commerce_app_flutter/ui/brand_list.dart';
+import 'package:e_commerce_app_flutter/ui/login_page.dart';
 import 'package:flutter/material.dart';
-import 'package:my_first_project/APICallExample/services/auth_service.dart';
-import 'package:my_first_project/APICallExample/ui/login_page.dart';
-import 'package:my_first_project/APICallExample/ui/product_list.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -31,7 +31,7 @@ class _SplashPageState extends State<SplashPage> {
     if (token != null && token.isNotEmpty) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const ProductListPage()),
+        MaterialPageRoute(builder: (_) => const BrandListPage()),
       );
     } else {
       Navigator.pushReplacement(
@@ -50,7 +50,7 @@ class _SplashPageState extends State<SplashPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             // App Logo
-            Image.asset('assets/img6.jpeg', width: 120, height: 120),
+            Image.asset('assets/hero.jpg', width: 120, height: 120),
 
             const SizedBox(height: 20),
 

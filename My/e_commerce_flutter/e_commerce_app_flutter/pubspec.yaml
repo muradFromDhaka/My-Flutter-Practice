@@ -30,15 +30,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  sqflite: ^2.3.0
-  path: ^1.8.3
-  provider: ^6.1.1
-  intl: ^0.18.1
-  flutter_launcher_icons: ^0.13.1
-  shimmer: ^3.0.0  # For loading effects
-  carousel_slider: ^4.2.1  # For product image carousel
-  badges: ^3.0.0  # For cart badge
-  flutter_rating_bar: ^4.0.1
+  fluttertoast: ^9.0.0
+  sqflite: ^2.4.2
+  path_provider: ^2.1.5
+  path: ^1.9.1
+  image_picker: ^1.2.1
+
+  http: ^1.6.0
+  shared_preferences: ^2.5.4
+  jwt_decoder: ^2.0.1
 
 
   
@@ -49,6 +49,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -56,6 +57,11 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/man2.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
