@@ -26,6 +26,9 @@ class _BrandFormPageState extends State<BrandFormPage> {
   bool active = true;
   bool loading = false;
 
+  
+  bool get isEdit => widget.brand != null;
+
   // ========================
   // Pick Image (Camera / Gallery)
   // ========================
@@ -54,8 +57,6 @@ class _BrandFormPageState extends State<BrandFormPage> {
       if (picked != null) setState(() => _image = File(picked.path));
     }
   }
-
-  bool get isEdit => widget.brand != null;
 
   @override
   void initState() {

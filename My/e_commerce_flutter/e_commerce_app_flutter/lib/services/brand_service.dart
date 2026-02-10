@@ -5,6 +5,7 @@ import 'package:e_commerce_app_flutter/models/brand.dart';
 import 'package:e_commerce_app_flutter/services/api_config.dart';
 import 'package:e_commerce_app_flutter/services/auth_service.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 class BrandService {
   final AuthService authService = AuthService();
@@ -68,50 +69,70 @@ class BrandService {
   //   }
   // }
 
+  // Future<void> createBrand(String name, String desc, File? image) async {
+  //   final uri = Uri.parse("${ApiConfig.baseUrl}/brands");
+  //   final request = http.MultipartRequest('POST', uri);
 
-Future<void> createBrand(String name, String desc, File? image) async {
-  final uri = Uri.parse("${ApiConfig.baseUrl}/brands");
-  final request = http.MultipartRequest('POST', uri);
+  //   // ✅ Token fetch & set
+  //   final token = await authService.getToken(); // await করতে হবে
+  //   if (token == null || token.isEmpty) {
+  //     throw Exception("No JWT token found. Please login first.");
+  //   }
+  //   request.headers['Authorization'] = 'Bearer $token';
 
-  // ✅ Token fetch & set
-  final token = await authService.getToken(); // await করতে হবে
-  if (token == null || token.isEmpty) {
-    throw Exception("No JWT token found. Please login first.");
-  }
-  request.headers['Authorization'] = 'Bearer $token';
+  //   // Brand JSON part
+  //   request.fields['brand'] = jsonEncode({'name': name, 'description': desc});
 
-  // Brand JSON part
-  request.fields['brand'] = jsonEncode({
-    'name': name,
-    'description': desc,
-  });
+  //   // Image attach (যদি থাকে)
+  //   if (image != null) {
+  //     request.files.add(await http.MultipartFile.fromPath('logo', image.path));
+  //   }
 
-  // Image attach (যদি থাকে)
-  if (image != null) {
+  //   // Request পাঠানো
+  //   final response = await request.send();
+  //   final resBody = await http.Response.fromStream(response);
+
+  //   print('Status: ${resBody.statusCode}');
+  //   print('Body: ${resBody.body}');
+  // }
+
+  Future<void> createBrand(String name, String desc, File? image) async {
+    final uri = Uri.parse("${ApiConfig.baseUrl}/brands");
+    final request = http.MultipartRequest('POST', uri);
+
+    // 🔐 Auth header
+    final token = await authService.getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception("No JWT token found. Please login first.");
+    }
+    request.headers['Authorization'] = 'Bearer $token';
+
+    // ✅ brand part → application/json
     request.files.add(
-      await http.MultipartFile.fromPath('image', image.path),
+      http.MultipartFile.fromString(
+        'brand',
+        jsonEncode({'name': name, 'description': desc}),
+        contentType: MediaType('application', 'json'),
+      ),
     );
+
+    // ✅ logo part → file
+    if (image != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'logo', // MUST match @RequestPart("logo")
+          image.path,
+        ),
+      );
+    }
+
+    final response = await request.send();
+    final resBody = await http.Response.fromStream(response);
+
+    print('Status: ${resBody.statusCode}');
+    print('Body: ${resBody.body}');
   }
-
-  // Request পাঠানো
-  final response = await request.send();
-  final resBody = await http.Response.fromStream(response);
-
-  print('Status: ${resBody.statusCode}');
-  print('Body: ${resBody.body}');
-}
-
-// ===========================================
-
-
-
-
-
-
-
-
-
-
+  // ===========================================
 
   /// 📝 UPDATE brand
   Future<Brand> updateBrand(int id, Brand brand) async {
