@@ -1,8 +1,9 @@
+import 'dart:io';
 
 import 'package:e_commerce_app_flutter/models/brand.dart';
 import 'package:e_commerce_app_flutter/services/brand_service.dart';
 import 'package:flutter/material.dart';
-
+import 'package:image_picker/image_picker.dart';
 
 class BrandFormPage extends StatefulWidget {
   final Brand? brand; // 👈 optional (null = create)
@@ -14,16 +15,45 @@ class BrandFormPage extends StatefulWidget {
 }
 
 class _BrandFormPageState extends State<BrandFormPage> {
-  
   final _formKey = GlobalKey<FormState>();
   final api = BrandService();
 
   final nameCtrl = TextEditingController();
   final descCtrl = TextEditingController();
-  final imageCtrl = TextEditingController();
+  // final imageCtrl = TextEditingController();
+  File? _image;
 
   bool active = true;
   bool loading = false;
+
+  // ========================
+  // Pick Image (Camera / Gallery)
+  // ========================
+  Future<void> _pickImage() async {
+    final source = await showDialog<ImageSource>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Select Image Source'),
+        actions: [
+          TextButton.icon(
+            icon: const Icon(Icons.photo_camera),
+            label: const Text('Camera'),
+            onPressed: () => Navigator.pop(ctx, ImageSource.camera),
+          ),
+          TextButton.icon(
+            icon: const Icon(Icons.photo_library),
+            label: const Text('Gallery'),
+            onPressed: () => Navigator.pop(ctx, ImageSource.gallery),
+          ),
+        ],
+      ),
+    );
+
+    if (source != null) {
+      final picked = await ImagePicker().pickImage(source: source);
+      if (picked != null) setState(() => _image = File(picked.path));
+    }
+  }
 
   bool get isEdit => widget.brand != null;
 
@@ -36,7 +66,8 @@ class _BrandFormPageState extends State<BrandFormPage> {
     if (b != null) {
       nameCtrl.text = b.name;
       descCtrl.text = b.description ?? '';
-      imageCtrl.text = b.logoUrl ?? '';    }
+      if (b.logoUrl != null) _image = File(b.logoUrl!);
+    }
   }
 
   void submit() async {
@@ -49,29 +80,28 @@ class _BrandFormPageState extends State<BrandFormPage> {
         id: widget.brand?.id,
         name: nameCtrl.text,
         description: descCtrl.text,
-        logoUrl: imageCtrl.text,
+        logoUrl: _image != null ? _image!.path : '',
       );
 
       if (isEdit) {
         await api.updateBrand(brand.id!, brand);
       } else {
-        await api.createBrand(brand);
+        await api.createBrand(brand.name, brand.description ?? '', _image);
       }
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            isEdit ? "✏️ Brand updated" : "✅ Brand created",
-          ),
+          content: Text(isEdit ? "✏️ Brand updated" : "✅ Brand created"),
         ),
       );
 
       Navigator.pop(context, true);
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => loading = false);
     }
@@ -80,17 +110,51 @@ class _BrandFormPageState extends State<BrandFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isEdit ? "Edit Product" : "Add Product"),
-      ),
+      appBar: AppBar(title: Text(isEdit ? "Edit Product" : "Add Product")),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
+              GestureDetector(
+                onTap: _pickImage,
+                child: Container(
+                  height: 200,
+                  width: 200,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.grey.shade100,
+                  ),
+                  child: _image == null
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              Icons.camera_alt,
+                              size: 40,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              "Add Image",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        )
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.file(
+                            _image!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
+                        ),
+                ),
+              ),
               _input(nameCtrl, "Brand Name"),
-              _input(imageCtrl, "Logo URL"),
               _input(descCtrl, "Description", maxLines: 3),
 
               SwitchListTile(
@@ -127,15 +191,13 @@ class _BrandFormPageState extends State<BrandFormPage> {
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
         controller: controller,
-        keyboardType:
-            isNumber ? TextInputType.number : TextInputType.text,
+        keyboardType: isNumber ? TextInputType.number : TextInputType.text,
         maxLines: maxLines,
         decoration: InputDecoration(
           labelText: label,
           border: const OutlineInputBorder(),
         ),
-        validator: (v) =>
-            v == null || v.isEmpty ? "Required" : null,
+        validator: (v) => v == null || v.isEmpty ? "Required" : null,
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:e_commerce_app_flutter/models/brand.dart';
 import 'package:e_commerce_app_flutter/services/api_config.dart';
@@ -49,23 +50,68 @@ class BrandService {
   }
 
   /// 🛡 CREATE brand
-  Future<Brand> createBrand(Brand brand) async {
-    final uri = Uri.parse("${ApiConfig.baseUrl}/brands");
+  // Future<Brand> createBrand(Brand brand) async {
+  //   final uri = Uri.parse("${ApiConfig.baseUrl}/brands");
 
-    final res = await http.post(
-      uri,
-      headers: await authService.headers(auth: true),
-      body: jsonEncode(brand.toJson()),
-    );
+  //   final res = await http.post(
+  //     uri,
+  //     headers: await authService.headers(auth: true),
+  //     body: jsonEncode(brand.toJson()),
+  //   );
 
-    if (res.statusCode == 200 || res.statusCode == 201) {
-      return Brand.fromJson(jsonDecode(res.body));
-    } else if (res.statusCode == 401) {
-      throw Exception("Unauthorized! Cannot create brand.");
-    } else {
-      throw Exception("Create failed: ${res.body}");
-    }
+  //   if (res.statusCode == 200 || res.statusCode == 201) {
+  //     return Brand.fromJson(jsonDecode(res.body));
+  //   } else if (res.statusCode == 401) {
+  //     throw Exception("Unauthorized! Cannot create brand.");
+  //   } else {
+  //     throw Exception("Create failed: ${res.body}");
+  //   }
+  // }
+
+
+Future<void> createBrand(String name, String desc, File? image) async {
+  final uri = Uri.parse("${ApiConfig.baseUrl}/brands");
+  final request = http.MultipartRequest('POST', uri);
+
+  // ✅ Token fetch & set
+  final token = await authService.getToken(); // await করতে হবে
+  if (token == null || token.isEmpty) {
+    throw Exception("No JWT token found. Please login first.");
   }
+  request.headers['Authorization'] = 'Bearer $token';
+
+  // Brand JSON part
+  request.fields['brand'] = jsonEncode({
+    'name': name,
+    'description': desc,
+  });
+
+  // Image attach (যদি থাকে)
+  if (image != null) {
+    request.files.add(
+      await http.MultipartFile.fromPath('image', image.path),
+    );
+  }
+
+  // Request পাঠানো
+  final response = await request.send();
+  final resBody = await http.Response.fromStream(response);
+
+  print('Status: ${resBody.statusCode}');
+  print('Body: ${resBody.body}');
+}
+
+// ===========================================
+
+
+
+
+
+
+
+
+
+
 
   /// 📝 UPDATE brand
   Future<Brand> updateBrand(int id, Brand brand) async {

@@ -1,4 +1,3 @@
-// pages/login_page.dart
 import 'package:e_commerce_app_flutter/services/auth_service.dart';
 import 'package:e_commerce_app_flutter/ui/brand_list.dart';
 import 'package:flutter/material.dart';
