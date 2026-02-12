@@ -20,13 +20,12 @@ class _BrandFormPageState extends State<BrandFormPage> {
 
   final nameCtrl = TextEditingController();
   final descCtrl = TextEditingController();
-  // final imageCtrl = TextEditingController();
-  File? _image;
+  File? _image; // newly picked image
+  String? _existingLogo; // server image path
 
   bool active = true;
   bool loading = false;
 
-  
   bool get isEdit => widget.brand != null;
 
   // ========================
@@ -67,7 +66,7 @@ class _BrandFormPageState extends State<BrandFormPage> {
     if (b != null) {
       nameCtrl.text = b.name;
       descCtrl.text = b.description ?? '';
-      if (b.logoUrl != null) _image = File(b.logoUrl!);
+      if (b.logoUrl != null) _existingLogo = b.logoUrl;
     }
   }
 
@@ -85,9 +84,12 @@ class _BrandFormPageState extends State<BrandFormPage> {
       );
 
       if (isEdit) {
-        await api.updateBrand(brand.id!, brand);
+        await api.updateBrand(
+        brand,
+          _image,
+        );
       } else {
-        await api.createBrand(brand.name, brand.description ?? '', _image);
+        await api.createBrand(brand, _image);
       }
 
       if (!mounted) return;
@@ -128,8 +130,23 @@ class _BrandFormPageState extends State<BrandFormPage> {
                     borderRadius: BorderRadius.circular(8),
                     color: Colors.grey.shade100,
                   ),
-                  child: _image == null
-                      ? Column(
+
+                  // ✅ এই child টা বসাও
+                  child: _image != null
+                      ? Image.file(
+                          _image!,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        )
+                      : _existingLogo != null
+                      ? Image.network(
+                          "http://192.168.0.215:8080/$_existingLogo",
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        )
+                      : Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: const [
                             Icon(
@@ -143,18 +160,10 @@ class _BrandFormPageState extends State<BrandFormPage> {
                               style: TextStyle(color: Colors.grey),
                             ),
                           ],
-                        )
-                      : ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            _image!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                          ),
                         ),
                 ),
               ),
+
               _input(nameCtrl, "Brand Name"),
               _input(descCtrl, "Description", maxLines: 3),
 

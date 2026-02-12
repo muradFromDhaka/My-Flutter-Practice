@@ -36,14 +36,32 @@ class AuthService {
     return prefs.getString('jwtToken');
   }
 
-  Future<Map<String, String>> headers({bool auth = false}) async {
+  // Future<Map<String, String>> headers({bool auth = false}) async {
+  //   final token = await getToken();
+  //   if (auth && (token == null || token.isEmpty)) {
+  //     throw Exception("No JWT token found. Please login first.");
+  //   }
+
+  //   final headers = <String, String>{
+  //     "Content-Type": "application/json",
+  //     if (auth) "Authorization": "Bearer $token",
+  //   };
+
+  //   return headers;
+  // }
+
+  Future<Map<String, String>> headers({
+    bool auth = false,
+    bool isMultipart = false,
+  }) async {
     final token = await getToken();
+
     if (auth && (token == null || token.isEmpty)) {
       throw Exception("No JWT token found. Please login first.");
     }
 
     final headers = <String, String>{
-      "Content-Type": "application/json",
+      if (!isMultipart) "Content-Type": "application/json",
       if (auth) "Authorization": "Bearer $token",
     };
 

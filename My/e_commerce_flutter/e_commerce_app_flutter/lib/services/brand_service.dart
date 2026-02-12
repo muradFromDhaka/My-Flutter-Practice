@@ -17,9 +17,6 @@ class BrandService {
       headers: await authService.headers(auth: true),
     );
 
-    // print("GET -> Status: ${res.statusCode}");
-    // print("Response: ${res.body}");
-
     if (res.statusCode == 200) {
       final List data = jsonDecode(res.body);
       return data.map((e) => Brand.fromJson(e)).toList();
@@ -40,7 +37,8 @@ class BrandService {
     );
 
     if (res.statusCode == 200) {
-      return Brand.fromJson(jsonDecode(res.body));
+      final data = jsonDecode(res.body);
+      return Brand.fromJson(data);
     } else if (res.statusCode == 401) {
       throw Exception("Unauthorized! Invalid token.");
     } else if (res.statusCode == 404) {
@@ -50,110 +48,87 @@ class BrandService {
     }
   }
 
-  /// 🛡 CREATE brand
-  // Future<Brand> createBrand(Brand brand) async {
-  //   final uri = Uri.parse("${ApiConfig.baseUrl}/brands");
-
-  //   final res = await http.post(
-  //     uri,
-  //     headers: await authService.headers(auth: true),
-  //     body: jsonEncode(brand.toJson()),
-  //   );
-
-  //   if (res.statusCode == 200 || res.statusCode == 201) {
-  //     return Brand.fromJson(jsonDecode(res.body));
-  //   } else if (res.statusCode == 401) {
-  //     throw Exception("Unauthorized! Cannot create brand.");
-  //   } else {
-  //     throw Exception("Create failed: ${res.body}");
-  //   }
-  // }
-
-  // Future<void> createBrand(String name, String desc, File? image) async {
-  //   final uri = Uri.parse("${ApiConfig.baseUrl}/brands");
-  //   final request = http.MultipartRequest('POST', uri);
-
-  //   // ✅ Token fetch & set
-  //   final token = await authService.getToken(); // await করতে হবে
-  //   if (token == null || token.isEmpty) {
-  //     throw Exception("No JWT token found. Please login first.");
-  //   }
-  //   request.headers['Authorization'] = 'Bearer $token';
-
-  //   // Brand JSON part
-  //   request.fields['brand'] = jsonEncode({'name': name, 'description': desc});
-
-  //   // Image attach (যদি থাকে)
-  //   if (image != null) {
-  //     request.files.add(await http.MultipartFile.fromPath('logo', image.path));
-  //   }
-
-  //   // Request পাঠানো
-  //   final response = await request.send();
-  //   final resBody = await http.Response.fromStream(response);
-
-  //   print('Status: ${resBody.statusCode}');
-  //   print('Body: ${resBody.body}');
-  // }
-
-  Future<void> createBrand(String name, String desc, File? image) async {
+  // 📝 CREATE brand with multipart/form-data
+  // ===========================================
+  Future<void> createBrand(Brand brand, File? image) async {
     final uri = Uri.parse("${ApiConfig.baseUrl}/brands");
     final request = http.MultipartRequest('POST', uri);
 
-    // 🔐 Auth header
-    final token = await authService.getToken();
-    if (token == null || token.isEmpty) {
-      throw Exception("No JWT token found. Please login first.");
-    }
-    request.headers['Authorization'] = 'Bearer $token';
+    // 🔐 Token
+    // final token = await authService.getToken();
+    // if (token == null || token.isEmpty) {
+    //   throw Exception("No JWT token found. Please login first.");
+    // }
+    // request.headers['Authorization'] = 'Bearer $token';
 
-    // ✅ brand part → application/json
+    request.headers.addAll(
+      await authService.headers(auth: true, isMultipart: true),
+    );
+
+    // ✅ Brand JSON Part
     request.files.add(
       http.MultipartFile.fromString(
-        'brand',
-        jsonEncode({'name': name, 'description': desc}),
+        'brand', // MUST match backend @RequestPart("brand")
+        jsonEncode(brand.toJson()),
         contentType: MediaType('application', 'json'),
       ),
     );
 
-    // ✅ logo part → file
+    // ✅ Image Part
     if (image != null) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'logo', // MUST match @RequestPart("logo")
+      request.files.add(await http.MultipartFile.fromPath(
+          'logo', // MUST match backend @RequestPart("logo")
           image.path,
         ),
       );
     }
 
+    // 🚀 Send Request
     final response = await request.send();
-    final resBody = await http.Response.fromStream(response);
 
-    print('Status: ${resBody.statusCode}');
-    print('Body: ${resBody.body}');
-  }
-  // ===========================================
-
-  /// 📝 UPDATE brand
-  Future<Brand> updateBrand(int id, Brand brand) async {
-    final uri = Uri.parse("${ApiConfig.baseUrl}/brands/$id");
-
-    final res = await http.put(
-      uri,
-      headers: await authService.headers(auth: true),
-      body: jsonEncode(brand.toJson()),
-    );
-
-    if (res.statusCode == 200) {
-      return Brand.fromJson(jsonDecode(res.body));
-    } else if (res.statusCode == 401) {
-      throw Exception("Unauthorized! Cannot update brand.");
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print("✅ Brand created successfully");
     } else {
-      throw Exception("Update failed: ${res.body}");
+      final resBody = await response.stream.bytesToString();
+      print("❌ Error: ${response.statusCode} - $resBody");
     }
   }
 
+  /// 📝 UPDATE brand
+  Future<void> updateBrand(Brand brand, File? image) async {
+    final uri = Uri.parse("${ApiConfig.baseUrl}/brands/${brand.id}");
+    final request = http.MultipartRequest('PUT', uri);
+
+    // final token = await authService.getToken();
+    // request.headers['Authorization'] = 'Bearer $token';
+    request.headers.addAll(
+      await authService.headers(auth: true, isMultipart: true),
+    );
+
+    // JSON part
+    request.files.add(
+      http.MultipartFile.fromString(
+        'brand',
+        jsonEncode(brand.toJson()),
+        contentType: MediaType('application', 'json'),
+      ),
+    );
+
+    // Optional image
+    if (image != null) {
+      request.files.add(await http.MultipartFile.fromPath('logo', image.path));
+    }
+
+    final response = await request.send();
+    final resBody = await http.Response.fromStream(response);
+
+    print(resBody.statusCode);
+    print(resBody.body);
+  }
+
+
   /// ❌ DELETE brand
+ // ===========================================
   Future<void> deleteBrand(int id) async {
     final uri = Uri.parse("${ApiConfig.baseUrl}/brands/$id");
 

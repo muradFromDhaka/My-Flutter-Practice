@@ -68,7 +68,6 @@ class _BrandListPageState extends State<BrandListPage>
   }
 
   Future<void> _editBrand(Brand brand) async {
-        print("----------------" + brand.name);
     final updated = await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => BrandFormPage(brand: brand)),
@@ -124,7 +123,7 @@ class _BrandListPageState extends State<BrandListPage>
                 return Card(
                   child: ListTile(
                     leading: Image.network(
-                      "http://192.168.20.43:8080/" + (p.logoUrl ?? ''),
+                      "http://192.168.0.215:8080/" + (p.logoUrl ?? ''),
                       width: 50,
                       errorBuilder: (_, __, ___) => const Icon(Icons.image),
                     ),
