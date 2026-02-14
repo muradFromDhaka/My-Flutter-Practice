@@ -1,7 +1,7 @@
 import 'package:e_commerce_app_flutter/services/auth_service.dart';
 import 'package:e_commerce_app_flutter/ui/brand_list.dart';
+import 'package:e_commerce_app_flutter/ui/registrationPage.dart';
 import 'package:flutter/material.dart';
-
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -68,12 +68,24 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
             isLoading
                 ? const CircularProgressIndicator()
-                : ElevatedButton(onPressed: LoginPage, child: const Text('Login')),
+                : ElevatedButton(
+                    onPressed: LoginPage,
+                    child: const Text('Login'),
+                  ),
             const SizedBox(height: 20),
+
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => RegistrationPage()),
+                );
+              },
+              child: Text("already have an account? Signin"),
+            ),
           ],
         ),
       ),
     );
   }
 }
-
