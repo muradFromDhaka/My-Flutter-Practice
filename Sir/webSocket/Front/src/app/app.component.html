@@ -1,0 +1,23 @@
+
+<div>{{ title }}  Count: {{ notify }}</div>
+<div class="chat-container">
+
+  <div class="chat-messages" #scrollContainer>
+    <div class="chat-message system-message" *ngFor="let task of tasks">
+      <div class="message-content">
+        <strong>{{ task.name }}</strong> - {{ task.days }} Days
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <form [formGroup]="form" (ngSubmit)="click()">
+      <input formControlName="name" placeholder="Task Name" />
+      <input formControlName="days" type="number" placeholder="Duration (Days)" />
+      <button type="submit">Add</button>
+    </form>
+  </div>
+
+</div>
+
+<!-- <router-outlet></router-outlet> -->

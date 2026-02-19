@@ -1,0 +1,30 @@
+<div *ngIf="!connected" class="login">
+  <input type="text" placeholder="Enter username" [(ngModel)]="username" />
+  <button (click)="connect()">Connect</button>
+</div>
+
+<div *ngIf="connected" class="chat-container">
+  <div class="public-chat">
+    <h3>Public Chat</h3>
+    <div class="messages">
+      <div *ngFor="let msg of publicMessages">
+        <strong>{{ msg.sender }}:</strong> {{ msg.content }}
+      </div>
+    </div>
+    <input type="text" placeholder="Message" [(ngModel)]="messageContent" />
+    <button (click)="sendPublic()">Send Public</button>
+  </div>
+
+  <div class="private-chat">
+    <h3>Private Chat</h3>
+    <input type="text" placeholder="Receiver username" [(ngModel)]="receiver" />
+    <input type="text" placeholder="Message" [(ngModel)]="messageContent" />
+    <button (click)="sendPrivate()">Send Private</button>
+
+    <div class="messages">
+      <div *ngFor="let msg of privateMessages">
+        <strong>{{ msg.sender }} → {{ msg.receiver }}:</strong> {{ msg.content }}
+      </div>
+    </div>
+  </div>
+</div>

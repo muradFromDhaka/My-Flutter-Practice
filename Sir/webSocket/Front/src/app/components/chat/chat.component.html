@@ -1,0 +1,597 @@
+<div class="chat-container">
+  <!-- Username Modal -->
+  <div *ngIf="showUsernameModal" class="username-modal-overlay">
+    <div class="username-modal">
+      <h3>Welcome to Chat</h3>
+      <p>Please enter your username to start chatting</p>
+      <div class="username-input-group">
+        <input 
+          [(ngModel)]="tempUsername" 
+          placeholder="Enter your username" 
+          (keyup.enter)="setUsername()"
+          class="username-input"
+          maxlength="20"
+        >
+        <button 
+          (click)="setUsername()" 
+          [disabled]="!tempUsername.trim()" 
+          class="btn btn-primary"
+        >
+          Start Chatting
+        </button>
+      </div>
+      <p class="username-note">This name will be visible to other users</p>
+    </div>
+  </div>
+
+  <!-- Create Group Modal -->
+  <div *ngIf="showCreateGroupModal" class="modal-overlay">
+    <div class="modal">
+      <h3>Create New Group</h3>
+      <div class="modal-content">
+        <div class="form-group">
+          <label>Group Name *</label>
+          <input 
+            [(ngModel)]="newGroupName" 
+            placeholder="Enter group name" 
+            class="modal-input"
+            maxlength="50"
+          >
+        </div>
+        
+        <div class="form-group">
+          <label>Description</label>
+          <textarea 
+            [(ngModel)]="newGroupDescription" 
+            placeholder="Enter group description (optional)"
+            class="modal-textarea"
+            rows="3"
+            maxlength="200"
+          ></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="newGroupIsPrivate"
+              class="checkbox-input"
+            >
+            <span class="checkmark"></span>
+            Private Group (Members can only join by invitation)
+          </label>
+          <small class="hint">Private groups are not visible to non-members</small>
+        </div>
+
+        <div class="modal-actions">
+          <button (click)="createGroup()" 
+                  [disabled]="!newGroupName.trim()" 
+                  class="btn btn-primary">
+            Create Group
+          </button>
+          <button (click)="showCreateGroupModal = false" class="btn btn-secondary">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Group Members Modal -->
+  <div *ngIf="showGroupMembersModal" class="modal-overlay">
+    <div class="modal large-modal">
+      <h3>
+        <span *ngIf="selectedGroup"># {{selectedGroup.name}}</span>
+        <span class="group-type-badge" [class.private]="selectedGroup?.isPrivate" [class.public]="!selectedGroup?.isPrivate">
+          {{selectedGroup?.isPrivate ? 'Private' : 'Public'}}
+        </span>
+      </h3>
+      <p class="group-description" *ngIf="selectedGroup?.description">{{selectedGroup?.description}}</p>
+      
+      <div class="modal-content">
+        <div class="members-header">
+          <h4>Group Members ({{groupMembers.length}})</h4>
+          <button *ngIf="selectedGroup && isGroupAdmin(selectedGroup)" 
+                  (click)="openAddMemberModal(selectedGroup)"
+                  class="btn btn-sm btn-primary">
+            + Add Member
+          </button>
+        </div>
+        
+        <div class="members-list">
+          <div *ngFor="let member of groupMembers" class="member-item">
+            <div class="member-info">
+              <span class="member-avatar">{{member?.charAt(0)?.toUpperCase()}}</span>
+              <div class="member-details">
+                <span class="member-name">{{member}}</span>
+                <div class="member-roles">
+                  <span *ngIf="selectedGroup?.createdBy === member" class="role-badge creator">Creator</span>
+                  <span *ngIf="selectedGroup?.admins?.includes(member) && selectedGroup?.createdBy !== member" class="role-badge admin">Admin</span>
+                  <span *ngIf="!selectedGroup?.admins?.includes(member)" class="role-badge member">Member</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="member-actions" *ngIf="selectedGroup && isGroupAdmin(selectedGroup) && member !== currentUser">
+              <button *ngIf="!selectedGroup.admins?.includes(member)" 
+                      class="btn-icon" 
+                      title="Make Admin"
+                      (click)="promoteToAdmin(member)">
+                👑
+              </button>
+              <button class="btn-icon btn-danger" 
+                      title="Remove from group"
+                      (click)="removeMemberFromGroup(member)">
+                🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="selectedGroup && isGroupCreator(selectedGroup)" class="danger-zone">
+          <h4>Danger Zone</h4>
+          <p>Permanently delete this group and all its messages.</p>
+          <button (click)="deleteGroup(selectedGroup)" class="btn btn-danger">
+            Delete Group
+          </button>
+        </div>
+
+        <div class="modal-actions">
+          <button (click)="showGroupMembersModal = false" class="btn btn-secondary">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Member Modal -->
+  <div *ngIf="showAddMemberModal" class="modal-overlay">
+    <div class="modal">
+      <h3>Add Member to {{selectedGroup?.name}}</h3>
+      <div class="modal-content">
+        <div class="form-group">
+          <label>Username *</label>
+          <input 
+            [(ngModel)]="newMemberUsername" 
+            placeholder="Enter username to add"
+            class="modal-input"
+            (keyup.enter)="addMemberToGroup()"
+          >
+          <small class="hint">Enter the exact username of the person you want to add</small>
+        </div>
+
+        <div class="modal-actions">
+          <button (click)="addMemberToGroup()" 
+                  [disabled]="!newMemberUsername.trim()" 
+                  class="btn btn-primary">
+            Add Member
+          </button>
+          <button (click)="showAddMemberModal = false" class="btn btn-secondary">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Chat Interface -->
+  <div *ngIf="!showUsernameModal" class="chat-interface">
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="header-left">
+        <h2>Chat Application</h2>
+        <div class="connection-status" [class.connected]="isConnected" [class.disconnected]="!isConnected">
+          <span class="status-indicator"></span>
+          {{ isConnected ? 'Connected' : 'Disconnected' }}
+        </div>
+      </div>
+      
+      <div class="header-right">
+        <!-- Notifications Bell -->
+        <div class="notifications-container">
+          <button (click)="toggleNotifications()" class="notification-bell">
+            🔔
+            <span *ngIf="unreadCount > 0" class="notification-badge">{{unreadCount}}</span>
+          </button>
+          
+          <!-- Notifications Dropdown -->
+          <div *ngIf="showNotifications" class="notifications-dropdown">
+            <div class="notifications-header">
+              <h4>Notifications</h4>
+              <button (click)="clearNotifications()" class="btn-clear">Clear All</button>
+            </div>
+            <div class="notifications-list">
+              <div *ngFor="let notification of notifications" 
+                   class="notification-item"
+                   [class.unread]="!notification.read">
+                <div class="notification-content" (click)="markNotificationAsRead(notification)">
+                  <div class="notification-title">
+                    <strong>{{notification.title}}</strong>
+                    <span class="notification-time">
+                      {{notification.timestamp | date:'short'}}
+                    </span>
+                  </div>
+                  <div class="notification-message">{{notification.message}}</div>
+                  <div *ngIf="notification.sender" class="notification-sender">
+                    From: {{notification.sender}}
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="notifications.length === 0" class="no-notifications">
+                No notifications
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Info -->
+        <div class="user-info">
+          <span class="current-user">{{currentUser}}</span>
+          <button (click)="changeUsername()" class="btn-change-user" title="Change username">
+            ✎
+          </button>
+        </div>
+
+        <!-- Connection Controls -->
+        <div class="connection-controls">
+          <button (click)="connect()" [disabled]="isConnected" class="btn btn-sm btn-primary">
+            Connect
+          </button>
+          <button (click)="disconnect()" [disabled]="!isConnected" class="btn btn-sm btn-secondary">
+            Disconnect
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-layout">
+      <!-- Left Sidebar - Conversations, Groups & Users -->
+      <div class="sidebar">
+        <!-- Create Group Button -->
+        <div class="sidebar-section">
+          <button (click)="showCreateGroupModal = true" class="btn btn-primary btn-block create-group-btn">
+            <span class="btn-icon">+</span>
+            Create Group
+          </button>
+        </div>
+
+        <!-- My Groups Section -->
+        <div class="sidebar-section" *ngIf="userGroups.length > 0">
+          <div class="section-header">
+            <h3>My Groups</h3>
+            <span class="group-count">{{userGroups.length}}</span>
+          </div>
+          <div class="conversation-list">
+            <div *ngFor="let group of userGroups" 
+                 class="conversation-item group-item">
+              <button (click)="selectGroup(group)" 
+                      [class.active]="activeConversationType === 'group' && activeGroupId === group.name"
+                      class="conversation-btn group-btn">
+                <span class="conversation-icon">#</span>
+                <span class="conversation-name">{{group.name}}</span>
+                <span class="group-meta">
+                  <span class="member-count">{{group.members?.length || 0}} members</span>
+                  <span *ngIf="group.isPrivate" class="private-indicator" title="Private Group">🔒</span>
+                </span>
+              </button>
+              <button (click)="openGroupMembers(group)" 
+                      class="btn-members"
+                      title="View Members">
+                👥
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Available Groups Section -->
+        <div class="sidebar-section">
+          <div class="section-header">
+            <h3>Available Groups</h3>
+            <span class="group-count">{{accessibleGroups.length}}</span>
+          </div>
+          <div class="conversation-list">
+         <!-- Available Groups Section -->
+          <!-- Available Groups Section -->
+<div class="sidebar-section">
+  <div class="section-header">
+    <h3>Available Groups</h3>
+    <span class="group-count">{{ getAvailableGroupsCount() }}</span>
+  </div>
+
+  <div class="conversation-list">
+    <div *ngFor="let group of getFilteredAccessibleGroups()" 
+         class="conversation-item group-item">
+
+      <button (click)="selectGroup(group)" class="conversation-btn group-btn">
+        <span class="conversation-icon">#</span>
+        <span class="conversation-name">{{ group.name }}</span>
+
+        <span class="group-meta">
+          <span class="member-count">{{ group.members?.length || 0 }} members</span>
+          <span *ngIf="group.isPrivate" class="private-indicator">🔒</span>
+          <span *ngIf="!group.isPrivate" class="public-indicator">🌐</span>
+        </span>
+      </button>
+
+      <button (click)="openGroupMembers(group)" class="btn-members">👥</button>
+    </div>
+
+    <div *ngIf="getFilteredAccessibleGroups().length === 0" class="no-groups">
+      <p>No groups available</p>
+      <p class="hint">Create a group to get started!</p>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="sidebar-section">
+  <div class="section-header">
+    <h3>Available Groups</h3>
+    <span class="group-count">{{getAvailableGroupsCount()}}</span>
+  </div>
+  <div class="conversation-list">
+    <ng-container *ngFor="let group of accessibleGroups">
+      <div *ngIf="!isUserInGroup(group)" class="conversation-item group-item">
+        <button (click)="selectGroup(group)" 
+                class="conversation-btn group-btn">
+          <span class="conversation-icon">#</span>
+          <span class="conversation-name">{{group.name}}</span>
+          <span class="group-meta">
+            <span class="member-count">{{group.members?.length || 0}} members</span>
+            <span *ngIf="group.isPrivate" class="private-indicator" title="Private Group">🔒</span>
+            <span *ngIf="!group.isPrivate" class="public-indicator" title="Public Group">🌐</span>
+          </span>
+        </button>
+        <button (click)="openGroupMembers(group)" 
+                class="btn-members"
+                title="View Members">
+          👥
+        </button>
+      </div>
+    </ng-container>
+    
+    <div *ngIf="getAvailableGroupsCount() === 0" class="no-groups">
+      <p>No groups available</p>
+      <p class="hint">Create a group to get started!</p>
+    </div>
+  </div>
+</div> -->
+           
+            <div *ngIf="accessibleGroups.length === 0" class="no-groups">
+              <p>No groups available</p>
+              <p class="hint">Create a group to get started!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Private Chats Section -->
+        <div class="sidebar-section">
+          <div class="section-header">
+            <h3>Private Chats</h3>
+            <span class="user-count">{{chatUsers.length}} users</span>
+          </div>
+          
+          <!-- Start New Chat -->
+          <div class="start-chat">
+            <input [(ngModel)]="recipient" 
+                   placeholder="Enter username to chat..." 
+                   class="recipient-input"
+                   (keyup.enter)="startPrivateChat()">
+            <button (click)="startPrivateChat()" 
+                    [disabled]="!recipient.trim()" 
+                    class="btn btn-sm btn-primary">
+              Start
+            </button>
+          </div>
+
+          <!-- Chat Users List -->
+          <div class="conversation-list">
+            <div *ngFor="let user of chatUsers" 
+                 class="conversation-item">
+              <button (click)="selectPrivateUser(user)" 
+                      [class.active]="activeConversationType === 'private' && activePrivateUser === user"
+                      class="conversation-btn user-btn">
+                <span class="conversation-icon">👤</span>
+                <span class="conversation-name">{{user}}</span>
+                <span *ngIf="getUnreadCountForUser(user) > 0" class="unread-badge">
+                  {{getUnreadCountForUser(user)}}
+                </span>
+              </button>
+            </div>
+            
+            <div *ngIf="chatUsers.length === 0" class="no-users">
+              <p>No private chats yet</p>
+              <p class="hint">Start a chat by entering a username above</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Chat Area -->
+      <div class="main-chat-area">
+        <!-- Group Chat -->
+        <div *ngIf="activeConversationType === 'group'" class="chat-section">
+          <div class="chat-header-section">
+            <div class="chat-title">
+              <h3># {{activeGroupId}}</h3>
+              <button *ngIf="currentGroup" 
+                      (click)="openCurrentGroupMembers()" 
+                      class="btn-members-header"
+                      title="View Members">
+                <span class="member-count">{{getCurrentGroupMemberCount()}} members</span>
+                <span class="members-icon">👥</span>
+              </button>
+            </div>
+            <div class="chat-info">
+              <span *ngIf="currentGroup?.isPrivate" class="private-badge">Private</span>
+              <span *ngIf="currentGroup && !currentGroup.isPrivate" class="public-badge">Public</span>
+              <span class="message-count">{{groupMessages.length}} messages</span>
+              <span *ngIf="currentGroup && isGroupAdmin(currentGroup)" class="admin-indicator" title="You are an admin">👑</span>
+            </div>
+          </div>
+          
+          <!-- Error Message -->
+          <div *ngIf="loadError" class="error-message">
+            {{loadError}}
+          </div>
+          
+          <!-- Loading Indicator -->
+          <div *ngIf="isLoadingGroupHistory" class="loading-indicator">
+            <div class="spinner"></div>
+            Loading message history...
+          </div>
+          
+          <!-- Messages Container -->
+          <div class="messages-container" #groupMessagesContainer>
+            <div *ngIf="!isLoadingGroupHistory && groupMessages.length === 0" class="no-messages">
+              <div class="no-messages-icon">💬</div>
+              <h4>No messages yet</h4>
+              <p>Start the conversation by sending a message!</p>
+              <div *ngIf="currentGroup && isGroupAdmin(currentGroup)" class="group-admin-hint">
+                <p>As a group admin, you can add members by clicking the members button above.</p>
+              </div>
+            </div>
+            
+            <div *ngFor="let msg of groupMessages" 
+                 class="message" 
+                 [class.own-message]="msg.sender === currentUser">
+              <div class="message-avatar">
+                {{msg.sender.charAt(0).toUpperCase()}}
+              </div>
+              <div class="message-content">
+                <div class="message-header">
+                  <strong class="message-sender">{{msg.sender}}</strong>
+                  <span *ngIf="currentGroup && isGroupAdmin(currentGroup) && msg.sender === currentGroup?.createdBy" 
+                        class="creator-badge">Creator</span>
+                  <span *ngIf="currentGroup && isGroupAdmin(currentGroup) && currentGroup?.admins?.includes(msg.sender) && msg.sender !== currentGroup?.createdBy" 
+                        class="admin-badge">Admin</span>
+                  <span class="message-time">{{msg.timestamp | date:'shortTime'}}</span>
+                </div>
+                <div class="message-text">{{msg.content}}</div>
+                <div class="message-footer">
+                  <span class="message-date">{{msg.timestamp | date:'MMM d'}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Message Input -->
+          <div class="message-input-container">
+            <div class="message-input">
+              <input [(ngModel)]="newGroupMessage" 
+                     placeholder="Type your message..." 
+                     (keyup.enter)="sendGroupMessage()"
+                     [disabled]="!isConnected"
+                     class="message-input-field">
+              <button (click)="sendGroupMessage()" 
+                      [disabled]="!newGroupMessage.trim() || !isConnected" 
+                      class="btn btn-primary send-button">
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Private Chat -->
+        <div *ngIf="activeConversationType === 'private'" class="chat-section">
+          <div class="chat-header-section">
+            <div class="chat-partner-info">
+              <div class="partner-avatar">👤</div>
+              <div>
+                <h3>{{activePrivateUser}}</h3>
+                <span class="chat-status">Online</span>
+              </div>
+            </div>
+            <div class="chat-info">
+              <span class="message-count">{{privateMessages.length}} messages</span>
+            </div>
+          </div>
+          
+          <!-- Loading Indicator -->
+          <div *ngIf="isLoadingPrivateHistory" class="loading-indicator">
+            <div class="spinner"></div>
+            Loading private messages...
+          </div>
+          
+          <!-- Messages Container -->
+          <div class="messages-container" #privateMessagesContainer>
+            <div *ngIf="!isLoadingPrivateHistory && privateMessages.length === 0" class="no-messages">
+              <div class="no-messages-icon">💭</div>
+              <h4>No messages yet</h4>
+              <p>Start a conversation with {{activePrivateUser}}!</p>
+            </div>
+            
+            <div *ngFor="let msg of privateMessages" 
+                 class="message private-message" 
+                 [class.own-message]="msg.sender === currentUser">
+              <div class="message-avatar">
+                {{msg.sender.charAt(0).toUpperCase()}}
+              </div>
+              <div class="message-content">
+                <div class="message-header">
+                  <strong class="message-sender">{{msg.sender}}</strong>
+                  <span class="message-time">{{msg.timestamp | date:'shortTime'}}</span>
+                </div>
+                <div class="message-text">{{msg.content}}</div>
+                <div class="message-footer">
+                  <span class="message-date">{{msg.timestamp | date:'MMM d'}}</span>
+                  <span *ngIf="msg.sender === currentUser" class="message-status">✓✓</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Message Input -->
+          <div class="message-input-container">
+            <div class="message-input">
+              <input [(ngModel)]="newPrivateMessage" 
+                     placeholder="Type a private message..." 
+                     (keyup.enter)="sendPrivateMessage()"
+                     [disabled]="!isConnected"
+                     class="message-input-field">
+              <button (click)="sendPrivateMessage()" 
+                      [disabled]="!newPrivateMessage.trim() || !isConnected" 
+                      class="btn btn-success send-button">
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Conversation Selected -->
+        <div *ngIf="!activeConversationType" class="welcome-section">
+          <div class="welcome-content">
+            <div class="welcome-icon">💬</div>
+            <h2>Welcome to Chat, {{currentUser}}!</h2>
+            <p>Select a group or start a private conversation to begin chatting.</p>
+            <div class="welcome-features">
+              <div class="feature">
+                <span class="feature-icon">#</span>
+                <span>Create and join groups</span>
+              </div>
+              <div class="feature">
+                <span class="feature-icon">👤</span>
+                <span>Private messaging</span>
+              </div>
+              <div class="feature">
+                <span class="feature-icon">🔒</span>
+                <span>Private groups with member management</span>
+              </div>
+              <div class="feature">
+                <span class="feature-icon">🔔</span>
+                <span>Real-time notifications</span>
+              </div>
+            </div>
+            
+            <div *ngIf="userGroups.length === 0" class="create-first-group">
+              <p>Get started by creating your first group!</p>
+              <button (click)="showCreateGroupModal = true" class="btn btn-primary btn-large">
+                + Create Your First Group
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
